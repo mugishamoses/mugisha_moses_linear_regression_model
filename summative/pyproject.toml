@@ -1,0 +1,17 @@
+[project]
+name = "regression-debt"
+version = "0.1.0"
+description = "Predict median graduate debt (College Scorecard): notebook, FastAPI, Flutter"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.165.0",
+    "joblib>=1.6.0",
+    "jupyter>=1.1.1",
+    "matplotlib>=3.11.2",
+    "pandas>=3.1.1",
+    "pydantic>=2.14.3",
+    "python-multipart>=0.0.34",
+    "scikit-learn>=1.9.1",
+    "seaborn>=0.13.2",
+    "uvicorn>=0.54.0",
+]

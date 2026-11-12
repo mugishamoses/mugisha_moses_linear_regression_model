@@ -1,0 +1,5 @@
+.venv/
+__pycache__/
+.ipynb_checkpoints/
+# raw Scorecard CSV is 102 MB (> GitHub 100 MB limit); commit the cleaned subset instead
+summative/linear_regression/Most-Recent-Cohorts-Institution.csv
