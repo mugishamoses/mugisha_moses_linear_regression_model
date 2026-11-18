@@ -1,11 +1,15 @@
-"""FastAPI service: predict median graduate debt (College Scorecard)."""
+"""FastAPI service: predict median graduate debt (College Scorecard) and retrain on uploaded data."""
+import io
 from pathlib import Path
 
 import joblib
 import pandas as pd
-from fastapi import FastAPI
+from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
+from sklearn.base import clone
+from sklearn.metrics import mean_squared_error
+from sklearn.model_selection import train_test_split
 
 HERE = Path(__file__).parent
 MODEL_PATH = HERE / "best_model.pkl"
@@ -63,3 +67,40 @@ def root():
 @app.post("/predict")
 def predict(inst: Institution):
     return {"predicted_median_debt_usd": round(predict_one(inst.model_dump()), 2)}
+
+
+@app.post("/retrain")
+async def retrain(file: UploadFile = File(..., description="CSV with the 11 feature columns plus GRAD_DEBT_MDN")):
+    global model
+    try:
+        new = pd.read_csv(io.BytesIO(await file.read()))
+    except Exception:
+        raise HTTPException(400, "File is not a readable CSV.")
+    missing = set(FEATURES + [TARGET]) - set(new.columns)
+    if missing:
+        raise HTTPException(400, f"CSV is missing columns: {sorted(missing)}")
+    new = new[FEATURES + [TARGET]].apply(pd.to_numeric, errors="coerce").dropna()
+    # validate every row with the same rules as /predict
+    bad = [i for i, r in new.iterrows() if not _valid(r)]
+    new = new.drop(index=bad)
+    if new.empty:
+        raise HTTPException(400, "No valid rows in the uploaded CSV.")
+
+    # Best model is a RandomForest (not SGD), so refit on original + new rows.
+    data = pd.concat([pd.read_csv(DATA_PATH), new], ignore_index=True)
+    X_tr, X_te, y_tr, y_te = train_test_split(data[FEATURES], data[TARGET], test_size=0.2, random_state=42)
+    candidate = clone(model).fit(X_tr, y_tr)
+    test_mse = mean_squared_error(y_te, candidate.predict(X_te))
+    model = candidate.fit(data[FEATURES], data[TARGET])  # final fit on all rows; /predict uses it immediately
+    joblib.dump(model, MODEL_PATH, compress=3)
+    data.to_csv(DATA_PATH, index=False)
+    return {"message": "Model retrained and now in use.", "new_rows": len(new), "skipped_rows": len(bad),
+            "total_rows": len(data), "test_mse": round(test_mse, 2)}
+
+
+def _valid(r) -> bool:
+    try:
+        Institution(**{k: (int(r[k]) if k in ("UGDS", "CONTROL", "PREDDEG", "REGION") else r[k]) for k in FEATURES})
+        return 0 <= r[TARGET] <= 200_000
+    except Exception:
+        return False
