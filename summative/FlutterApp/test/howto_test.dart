@@ -22,7 +22,7 @@ import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 
 /// Production API answers for the inputs used below (keyed by in-state tuition).
-const live = {72690: 19494.70, 45000: 19807.25, 15535: 13952.12, 10762: 19059.20, 38360: 23335.92};
+const live = {3000: 19021.21, 72690: 19494.70, 45000: 19807.25, 15535: 13952.12, 10762: 19059.20, 38360: 23335.92};
 
 class Note {
   const Note(this.step, this.title, this.body, this.rings);
@@ -453,5 +453,22 @@ void main() {
         rings: [key('result')]);
     await tt.tap(find.text('How it works'));
     await snap('"How it works" opens the explanation', 'Same About sheet as on the phone.');
+  });
+
+  testWidgets('10 my school', (t) async {
+    final form = await start(t, '10_my_school');
+    await reveal(key('example3'));
+    await snap('Tap "My school"', 'The 4th example (swipe the example row left to reach it). Tuition is \$3,000 per year.',
+        rings: [key('example3')]);
+    await tap(key('example3'));
+    await tap(find.text('Size & cost'));
+    await snap('Check the tuition', 'In-state tuition per year shows 3,000 — that is \$250 a month.', rings: [field('TUITIONFEE_IN')]);
+    await top();
+    await snap('Tap Predict', '', rings: [key('predict')]);
+    await tt.tap(key('predict'));
+    await settle();
+    expect(form.debt, 19021.21);
+    await snap('Estimate for your school', '\$19,021 — Typical. "Low in-state tuition (\$3,000) helps keep debt down."',
+        rings: [key('result')]);
   });
 }
