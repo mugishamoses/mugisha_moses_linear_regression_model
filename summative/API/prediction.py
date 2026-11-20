@@ -29,7 +29,7 @@ app = FastAPI(title="Graduate Debt Predictor",
 # No cookies or auth are used, so credentials are disabled. Mobile apps are not browsers and are unaffected.
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://graduate-debt-api.onrender.com", "http://localhost:8080", "http://127.0.0.1:8080"],
+    allow_origins=["https://graduate-debt-api-d2wk.onrender.com", "http://localhost:8080", "http://127.0.0.1:8080"],
     allow_methods=["GET", "POST"],
     allow_headers=["Content-Type"],
     allow_credentials=False,

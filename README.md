@@ -19,7 +19,7 @@ and the target `GRAD_DEBT_MDN`. Source: https://collegescorecard.ed.gov/data/
 
 ## API (Swagger UI)
 
-https://graduate-debt-api.onrender.com/docs
+https://graduate-debt-api-d2wk.onrender.com/docs
 
 - `POST /predict` — JSON with the 11 features → predicted median debt
 - `POST /retrain` — upload a CSV with the same columns (+ `GRAD_DEBT_MDN`); the model is refit and used immediately (sample: `summative/API/sample_retrain.csv`)

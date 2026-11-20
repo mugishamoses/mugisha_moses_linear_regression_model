@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 // Deployed Render API. Override for local testing: flutter run --dart-define=API_URL=http://10.0.2.2:8000/predict
-const apiUrl = String.fromEnvironment('API_URL', defaultValue: 'https://graduate-debt-api.onrender.com/predict');
+const apiUrl = String.fromEnvironment('API_URL', defaultValue: 'https://graduate-debt-api-d2wk.onrender.com/predict');
 
 /// One input per model feature: API key, label, hint, integer?, min, max (same ranges as the Pydantic model).
 class Input {
