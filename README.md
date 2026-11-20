@@ -11,11 +11,18 @@ so students and advisors can compare schools and flag ones whose debt burden is 
 
 ## Dataset
 
-TODO
+U.S. Department of Education **College Scorecard — Most Recent Cohorts (Institution level)**: 6,272 U.S. institutions × 3,379 columns.
+After cleaning: 2,699 institutions, 11 features (8 numeric: enrolment, in-state tuition, Pell share, loan share, share aged 25+,
+instructional spend per student, median earnings 10 yrs after entry, faculty salary; 3 categorical: control, predominant degree, region)
+and the target `GRAD_DEBT_MDN`. Source: https://collegescorecard.ed.gov/data/
+(the 102 MB raw CSV is not committed; the cleaned subset is `summative/API/debt_data.csv`).
 
 ## API (Swagger UI)
 
-TODO
+https://graduate-debt-api.onrender.com/docs
+
+- `POST /predict` — JSON with the 11 features → predicted median debt
+- `POST /retrain` — upload a CSV with the same columns (+ `GRAD_DEBT_MDN`); the model is refit and used immediately (sample: `summative/API/sample_retrain.csv`)
 
 ## Video demo
 
@@ -23,4 +30,18 @@ YOUTUBE_LINK_HERE
 
 ## How to run the mobile app
 
-TODO
+1. Install the Flutter SDK (3.x) and Android Studio, and create/start an Android emulator (or connect a phone with USB debugging). Check with `flutter doctor`.
+2. Clone the repo: `git clone https://github.com/mugishamoses/mugisha_moses_linear_regression_model.git` and `cd mugisha_moses_linear_regression_model/summative/FlutterApp`
+3. Install dependencies: `flutter pub get`
+4. Run: `flutter run` (pick the emulator/phone if asked).
+5. Fill in all 11 fields (example: 2030, 72690, 0.2, 0.28, 0.01, 31938, 84956, 12404, 2, 3, 2) and tap **Predict**.
+   The first request may take up to a minute while the free Render service wakes up.
+
+### Run the API / notebook locally (optional)
+
+```bash
+cd linear_regression_model/summative
+uv sync
+cd API && uv run uvicorn prediction:app --reload     # http://127.0.0.1:8000/docs
+uv run jupyter notebook ../linear_regression/multivariate.ipynb
+```
