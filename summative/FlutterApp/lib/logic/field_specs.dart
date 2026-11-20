@@ -87,6 +87,12 @@ const examples = [
     'CONTROL': '3', 'PREDDEG': '1', 'REGION': '5', 'UGDS': '582', 'TUITIONFEE_IN': '15,535', 'INEXPFTE': '3,724',
     'PCTFLOAN': '71.2', 'PCTPELL': '77.4', 'UG25ABV': '62.2', 'MD_EARN_WNE_P10': '40,843', 'AVGFACSAL': '6,090',
   }),
+  // shortcut: user's own school — only tuition is known ($3,000/yr); other values borrowed from "Public university",
+  // replace them with the school's real figures when available.
+  Example('My school', {
+    'CONTROL': '1', 'PREDDEG': '3', 'REGION': '5', 'UGDS': '10,074', 'TUITIONFEE_IN': '3,000', 'INEXPFTE': '10,232',
+    'PCTFLOAN': '38.1', 'PCTPELL': '38.7', 'UG25ABV': '9.1', 'MD_EARN_WNE_P10': '56,442', 'AVGFACSAL': '10,181',
+  }),
 ];
 
 /// Facts about the model/data, shown in the result card and About sheet (from multivariate.ipynb).

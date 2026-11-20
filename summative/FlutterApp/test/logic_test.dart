@@ -45,6 +45,15 @@ void main() {
     expect(f.sectionsComplete, 4);
   });
 
+  test('"My school" example sends \$3,000 tuition', () {
+    final f = FormController()..applyExample(3);
+    expect(examples[3].label, 'My school');
+    expect(f.body()['TUITIONFEE_IN'], 3000);
+    expect(f.sectionsComplete, 4);
+    expect(insightFor({for (final e in f.body().entries) e.key: e.value.toDouble() * (e.key.startsWith('PCT') || e.key == 'UG25ABV' ? 100 : 1)}),
+        contains('Low in-state tuition (\$3,000)'));
+  });
+
   test('band, bar position and insight', () {
     expect(bandOf(19355), Band.typical);
     expect(bandOf(9000), Band.low);
