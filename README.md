@@ -34,8 +34,12 @@ YOUTUBE_LINK_HERE
 2. Clone the repo: `git clone https://github.com/mugishamoses/mugisha_moses_linear_regression_model.git` and `cd mugisha_moses_linear_regression_model/summative/FlutterApp`
 3. Install dependencies: `flutter pub get`
 4. Run: `./run.sh` — opens the app in Chrome on port 8080 by default and falls back to an Android emulator/phone if Chrome is missing or the web run fails. To force Android: `flutter run -d emulator-5554` (or your device id from `flutter devices`).
-5. Fill in all 11 fields (example: 2030, 72690, 0.2, 0.28, 0.01, 31938, 84956, 12404, 2, 3, 2) and tap **Predict**.
+5. Tap an example (**Public university**, **Private college**, **For-profit**) or fill the 4 sections yourself
+   (11 inputs; shares are typed as percentages 0–100, e.g. `28` for 28 %), then tap **Predict**.
+   Missing, wrong-type or out-of-range values are explained in the result card.
    The first request may take up to a minute while the free Render service wakes up.
+
+UI designs for every screen state are in `summative/FlutterApp/design/` (S0 design system → S10 browser layout).
 
 ### Run the API / notebook locally (optional)
 
