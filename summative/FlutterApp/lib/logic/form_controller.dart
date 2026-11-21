@@ -36,7 +36,8 @@ class FormController extends ChangeNotifier {
   String networkDetail = '';
   String? serverIssueKey, serverIssue;
   int? example;
-  int? open = 0; // expanded section
+  // All 4 sections start expanded so every one of the 11 input fields is visible on the page.
+  Set<int> open = {0, 1, 2, 3};
   bool _bulk = false;
   Timer? _wakeTimer;
 
@@ -87,6 +88,14 @@ class FormController extends ChangeNotifier {
     return touched ? SectionState.inProgress : SectionState.notStarted;
   }
 
+  /// First section that still needs input (highlighted in the progress dots), or null when all are done.
+  int? get firstIncomplete {
+    for (var i = 0; i < 4; i++) {
+      if (sectionState(i) != SectionState.complete) return i;
+    }
+    return null;
+  }
+
   int sectionDone(int s) => fieldsOf(s).where((f) => isValid(f.key)).length;
   int get sectionsComplete => List.generate(4, sectionState).where((x) => x == SectionState.complete).length;
   int get sectionsWithErrors => List.generate(4, sectionState).where((x) => x == SectionState.error).length;
@@ -110,34 +119,11 @@ class FormController extends ChangeNotifier {
       issues = currentIssues();
       if (issues.isEmpty) phase = debt != null ? Phase.result : Phase.idle;
     }
-    // auto-advance: finishing the open section opens the next unfinished one
-    final s = spec(key).section;
-    if (open == s && sectionState(s) == SectionState.complete && focus[key]!.hasFocus == false) _advanceFrom(s);
     notifyListeners();
   }
 
-  void _advanceFrom(int s) {
-    for (var i = 1; i <= 4; i++) {
-      final n = (s + i) % 4;
-      if (sectionState(n) != SectionState.complete) {
-        open = n;
-        return;
-      }
-    }
-    open = null;
-  }
-
-  /// Called when a field loses focus or the keyboard "next" is pressed on the last field of a section.
-  void leftField(String key) {
-    final s = spec(key).section;
-    if (open == s && sectionState(s) == SectionState.complete) {
-      _advanceFrom(s);
-      notifyListeners();
-    }
-  }
-
   void toggle(int s) {
-    open = open == s ? null : s;
+    open.contains(s) ? open.remove(s) : open.add(s);
     notifyListeners();
   }
 
@@ -146,7 +132,6 @@ class FormController extends ChangeNotifier {
   void applyExample(int i) {
     _setAll(examples[i].values);
     example = i;
-    open = null;
     notifyListeners();
   }
 
@@ -157,7 +142,7 @@ class FormController extends ChangeNotifier {
     stale = submitted = false;
     issues = [];
     example = null;
-    open = 0;
+    open = {0, 1, 2, 3};
     notifyListeners();
   }
 
@@ -174,7 +159,7 @@ class FormController extends ChangeNotifier {
 
   /// Opens the field's section and focuses it (the scroll view brings it into view).
   void jumpTo(String key) {
-    open = spec(key).section;
+    open.add(spec(key).section);
     notifyListeners();
     WidgetsBinding.instance.addPostFrameCallback((_) => focus[key]!.requestFocus());
   }
@@ -193,7 +178,7 @@ class FormController extends ChangeNotifier {
     issues = currentIssues();
     if (issues.isNotEmpty) {
       phase = Phase.inputError;
-      open = spec(issues.first.key).section;
+      open.add(spec(issues.first.key).section);
       notifyListeners();
       return;
     }
@@ -211,14 +196,13 @@ class FormController extends ChangeNotifier {
       lastInputs = inputs;
       phase = Phase.result;
       stale = false;
-      open = null;
     } on ApiFieldError catch (e) {
       final known = fields.any((f) => f.key == e.key);
       serverIssueKey = known ? e.key : null;
       serverIssue = e.message;
       issues = [FieldIssue(known ? e.key : fields.first.key, e.message)];
       phase = Phase.inputError;
-      if (known) open = spec(e.key).section;
+      if (known) open.add(spec(e.key).section);
     } on ApiNetworkError catch (e) {
       networkDetail = e.detail;
       phase = Phase.networkError;

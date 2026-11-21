@@ -447,7 +447,7 @@ void main() {
     await tt.tap(key('predict'));
     await settle();
     expect(form.debt, 23335.92);
-    form.open = 2;
+    form.open = {0, 1, 2, 3};
     form.notifyListeners();
     await snap('Result next to your inputs', 'Edit any section on the right — the estimate on the left stays in view.',
         rings: [key('result')]);

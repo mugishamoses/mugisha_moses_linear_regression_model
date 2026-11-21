@@ -64,7 +64,7 @@ void main() {
     form.text['TUITIONFEE_IN']!.text = '72,69';
     form.text['INEXPFTE']!.text = '31,9k8';
     form.text['TUITIONFEE_IN']!.text = '72,69';
-    form.open = 1;
+    form.open = {1};
     form.notifyListeners();
     await t.pumpAndSettle();
     form.focus['TUITIONFEE_IN']!.requestFocus();
@@ -76,7 +76,7 @@ void main() {
     final form = await pump(t);
     form.applyExample(1);
     form.text['UG25ABV']!.text = '';
-    form.open = 2;
+    form.open = {2};
     form.notifyListeners();
     await t.pumpAndSettle();
     await scrollBy(t, 560);
@@ -150,7 +150,7 @@ void main() {
     final form = await pump(t, client: fixed(23412), size: const Size(1440, 900));
     form.applyExample(1);
     await form.predict();
-    form.open = 2;
+    form.open = {2};
     form.notifyListeners();
     await shot(t, 'S10_wide');
   });

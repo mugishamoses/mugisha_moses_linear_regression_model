@@ -51,7 +51,6 @@ class LabeledField extends StatelessWidget {
       inputFormatters: [if (f.kind == Kind.count || f.kind == Kind.money) GroupingFormatter()],
       onTapOutside: (_) => focusNode.unfocus(),
       onEditingComplete: () {
-        form.leftField(f.key);
         if (last && f.section == 3) {
           focusNode.unfocus();
           form.predict();
@@ -175,7 +174,7 @@ class ProgressRow extends StatelessWidget {
     DotState dot(int i) => switch (form.sectionState(i)) {
           SectionState.complete => DotState.done,
           SectionState.error => DotState.error,
-          _ => form.open == i ? DotState.current : DotState.empty,
+          _ => form.firstIncomplete == i ? DotState.current : DotState.empty,
         };
     return Row(children: [
       Expanded(child: Text('Your inputs', style: T.section.copyWith(fontSize: large ? 22 : 18))),

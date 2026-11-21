@@ -17,7 +17,7 @@ class SectionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final state = form.sectionState(index);
-    final open = form.open == index;
+    final open = form.open.contains(index);
     final fs = fieldsOf(index);
     final done = form.sectionDone(index);
     final issues = fs.where((f) => form.errorFor(f.key) != null).length;

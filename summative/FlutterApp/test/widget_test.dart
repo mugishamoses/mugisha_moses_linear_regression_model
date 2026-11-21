@@ -29,18 +29,25 @@ String resultText(WidgetTester t) =>
         .join(' | ');
 
 void main() {
-  testWidgets('rubric: 11 text fields (all sections open), a "Predict" button, one result area', (t) async {
-    final form = await pump(t);
+  testWidgets('rubric: all 11 labelled text fields on the page at start, a "Predict" button, one result area', (t) async {
+    await pump(t);
+    expect(find.byType(TextField), findsNWidgets(11)); // every section starts expanded — nothing hidden
+    for (final label in ['Who runs the school?', 'Region', 'Undergraduate students', 'Students with Pell grants',
+        'Average faculty salary per month']) {
+      expect(find.text(label), findsOneWidget);
+    }
     expect(find.text('Predict'), findsOneWidget);
     expect(find.byKey(const Key('result')), findsOneWidget);
-    var count = 0;
-    for (var s = 0; s < 4; s++) {
-      form.open = s;
-      form.notifyListeners();
-      await t.pumpAndSettle();
-      count += t.widgetList(find.byType(TextField)).length;
-    }
-    expect(count, 11);
+  });
+
+  testWidgets('a section can still be collapsed and re-opened', (t) async {
+    await pump(t);
+    await t.tap(find.text('Size & cost'));
+    await t.pumpAndSettle();
+    expect(find.byType(TextField), findsNWidgets(8));
+    await t.tap(find.text('Size & cost'));
+    await t.pumpAndSettle();
+    expect(find.byType(TextField), findsNWidgets(11));
   });
 
   testWidgets('example + Predict shows the result, then Predict again', (t) async {
