@@ -26,7 +26,7 @@ https://graduate-debt-api-d2wk.onrender.com/docs
 
 ## Video demo
 
-YOUTUBE_LINK_HERE
+https://www.youtube.com/watch?v=1XigDrbO954
 
 ## How to run the mobile app
 
